@@ -1,8 +1,6 @@
 const express = require('express');
 const app = express();
-
-// RailwayではPORT環境変数が必要
-const port = process.env.PORT || 3000;
+const port = 3000;
 
 app.get('/', (req, res) => {
   const videoId = req.query.v;
@@ -11,44 +9,49 @@ app.get('/', (req, res) => {
     return res.status(400).send('動画ID (v) を指定してください。');
   }
 
-  const youtubeUrl = `https://youtu.be/${videoId}`;
   const youtubeAppUrl = `vnd.youtube:${videoId}`;
+  const tweetAppUrl = 'twitter://post?message=応援中！%20#櫻坂46';
   const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
-
-  const ogTitle = 'YouTube動画をアプリで開く';
-  const ogDescription = 'このリンクを開くとYouTubeアプリが自動で起動します。';
 
   const html = `
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>${ogTitle}</title>
+  <title>YouTubeアプリ + X投稿</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta property="og:type" content="video.other">
-  <meta property="og:url" content="${youtubeUrl}">
-  <meta property="og:title" content="${ogTitle}">
-  <meta property="og:description" content="${ogDescription}">
-  <meta property="og:image" content="${thumbnailUrl}">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="${ogTitle}">
-  <meta name="twitter:description" content="${ogDescription}">
-  <meta name="twitter:image" content="${thumbnailUrl}">
-  <meta name="twitter:url" content="${youtubeUrl}">
-  <script>
-    const youtubeUrl = '${youtubeUrl}';
-    const youtubeAppUrl = '${youtubeAppUrl}';
-    function openYouTube() {
-      window.location = youtubeAppUrl;
-      setTimeout(() => {
-        window.location = youtubeUrl;
-      }, 2000);
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #000;
     }
-    window.onload = openYouTube;
+    img {
+      width: 100%;
+      max-width: 600px;
+      cursor: pointer;
+    }
+  </style>
+  <script>
+    const youtubeAppUrl = '${youtubeAppUrl}';
+    const tweetAppUrl = '${tweetAppUrl}';
+
+    // ページ読み込みと同時にYouTubeアプリを起動（フォールバックなし）
+    window.onload = function() {
+      window.location = youtubeAppUrl;
+    };
+
+    // 画像クリックでX投稿画面をアプリで開く
+    function openTwitterPost() {
+      window.location = tweetAppUrl;
+    }
   </script>
 </head>
 <body>
-  <p>アプリを起動中です。開かない場合は <a href="${youtubeUrl}">こちら</a> をクリックしてください。</p>
+  <img src="${thumbnailUrl}" alt="画像" onclick="openTwitterPost()">
 </body>
 </html>
   `;
