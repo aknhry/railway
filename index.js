@@ -1,6 +1,6 @@
 import express from 'express';
 import axios from 'axios';
-import cheerio from 'cheerio'; // ESM対応済み
+import * as cheerio from 'cheerio';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -21,7 +21,7 @@ app.get('/', async (req, res) => {
   try {
     const livecountsUrl = `https://livecounts.io/youtube-live-view-counter/${videoId}`;
     const response = await axios.get(livecountsUrl, {
-      headers: { 'User-Agent': 'Mozilla/5.0' } // Cloudflare対策
+      headers: { 'User-Agent': 'Mozilla/5.0' }
     });
     const $ = cheerio.load(response.data);
     const extractedTitle = $('title').text().trim();
