@@ -1,6 +1,7 @@
-const express = require('express');
-const axios = require('axios');
-const cheerio = require('cheerio'); // タイトル取得用
+import express from 'express';
+import axios from 'axios';
+import cheerio from 'cheerio'; // ESM対応済み
+
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -16,11 +17,12 @@ app.get('/', async (req, res) => {
   const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
   const thisUrl = `https://www.xouxube.com/?v=${videoId}`;
 
-  // タイトル取得
   let pageTitle = 'YouTubeアプリ + X投稿';
   try {
     const livecountsUrl = `https://livecounts.io/youtube-live-view-counter/${videoId}`;
-    const response = await axios.get(livecountsUrl);
+    const response = await axios.get(livecountsUrl, {
+      headers: { 'User-Agent': 'Mozilla/5.0' } // Cloudflare対策
+    });
     const $ = cheerio.load(response.data);
     const extractedTitle = $('title').text().trim();
     if (extractedTitle) {
@@ -37,20 +39,15 @@ app.get('/', async (req, res) => {
   <meta charset="UTF-8">
   <title>${pageTitle}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- OGP -->
   <meta property="og:title" content="${pageTitle}">
   <meta property="og:description" content="YouTubeアプリで開く">
   <meta property="og:image" content="${thumbnailUrl}">
   <meta property="og:url" content="${thisUrl}">
   <meta property="og:type" content="website">
-
-  <!-- Twitterカード -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="${pageTitle}">
   <meta name="twitter:description" content="YouTubeアプリで開く">
   <meta name="twitter:image" content="${thumbnailUrl}">
-
   <style>
     body {
       margin: 0;
@@ -69,11 +66,9 @@ app.get('/', async (req, res) => {
   <script>
     const youtubeAppUrl = '${youtubeAppUrl}';
     const tweetAppUrl = '${tweetAppUrl}';
-
     window.onload = function() {
       window.location = youtubeAppUrl;
     };
-
     function openTwitterPost() {
       window.location = tweetAppUrl;
     }
