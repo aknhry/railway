@@ -6,14 +6,15 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.get('/', async (req, res) => {
-  const videoId = req.query.v;
+  const videoId = req.query.v as string;
+  const tweetText = (req.query.t as string) || '応援中！ #櫻坂46';
 
   if (!videoId) {
     return res.status(400).send('動画ID (v) を指定してください。');
   }
 
   const youtubeAppUrl = `vnd.youtube:${videoId}`;
-  const tweetAppUrl = 'twitter://post?message=応援中！%20#櫻坂46';
+  const tweetAppUrl = `twitter://post?message=${encodeURIComponent(tweetText)}`;
   const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
   const thisUrl = `https://www.xouxube.com/?v=${videoId}`;
 
