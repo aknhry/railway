@@ -6,8 +6,8 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.get('/', async (req, res) => {
-  const videoId = req.query.v as string;
-  const tweetText = (req.query.t as string) || '応援中！ #櫻坂46';
+  const videoId = req.query.v;
+  const tweetText = req.query.t || '応援中！ #櫻坂46';
 
   if (!videoId) {
     return res.status(400).send('動画ID (v) を指定してください。');
@@ -85,5 +85,5 @@ app.get('/', async (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`起動完了: http://localhost:${port}`);
+  console.log(`✅ 起動完了: http://localhost:${port}`);
 });
