@@ -1,16 +1,25 @@
 import express from 'express';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// publicディレクトリから静的ファイルを配信
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', async (req, res) => {
   const videoId = req.query.v;
   const tweetText = req.query.t || 'https://www.xouxube.com/';
 
   if (!videoId) {
-    return res.status(400).send('動画ID (v) を指定してください。');
+    // vが未指定なら home.html を返す
+    return res.sendFile(path.join(__dirname, 'public', 'home.html'));
   }
 
   const youtubeAppUrl = `vnd.youtube:${videoId}`;
