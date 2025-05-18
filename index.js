@@ -7,7 +7,7 @@ const port = process.env.PORT || 3000;
 
 app.get('/', async (req, res) => {
   const videoId = req.query.v;
-  const tweetText = req.query.t || '応援中！ #櫻坂46';
+  const tweetText = req.query.t || 'https://www.xouxube.com/';
 
   if (!videoId) {
     return res.status(400).send('動画ID (v) を指定してください。');
