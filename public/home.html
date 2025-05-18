@@ -74,6 +74,19 @@
       gap: 1rem;
       justify-content: center;
       margin-top: 1em;
+      flex-wrap: wrap;
+    }
+    .btn-group button {
+      flex: 1;
+      min-width: 100px;
+    }
+    .x-post-button {
+      background: #000;
+      color: white;
+      font-weight: bold;
+    }
+    .x-post-button:hover {
+      background: #333;
     }
   </style>
 </head>
@@ -93,6 +106,7 @@
     <input type="text" id="generatedUrl" readonly>
     <div class="btn-group">
       <button onclick="openGeneratedUrl()">開く</button>
+      <button class="x-post-button" onclick="postToX()">Xでポスト</button>
       <button onclick="copyUrl()">コピー</button>
     </div>
   </div>
@@ -151,6 +165,13 @@
       copyText.setSelectionRange(0, 99999);
       document.execCommand("copy");
       alert("コピーしました！");
+    }
+
+    function postToX() {
+      const url = document.getElementById('generatedUrl').value;
+      const tweetText = document.getElementById('tweetText').value.trim() || url;
+      const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}&url=${encodeURIComponent(url)}`;
+      window.open(tweetUrl, '_blank');
     }
   </script>
 </body>
